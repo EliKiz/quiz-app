@@ -4,8 +4,10 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Form, Input, InputNumber, Select, Button, Card, Typography, Spin } from "antd";
 import { useSettingsStore, useCategoryStore } from "./store";
-import "antd/dist/reset.css";
 import { SmileOutlined } from '@ant-design/icons';
+import "antd/dist/reset.css";
+
+import styles from "../shared/styles/Home.module.css";
 
 export default function Home() {
   const router = useRouter();
@@ -17,12 +19,12 @@ export default function Home() {
   }, [fetchCategories, categories.length]);
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f7f8fa", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <Card style={{ width: 500, padding: 32, boxShadow: "0 2px 16px #0001" }}>
-        <div style={{ textAlign: "center", marginBottom: 24 }}>
-          <SmileOutlined style={{ fontSize: 48, color: '#1890ff', marginBottom: 8 }} />
+    <div className={styles.container}>
+      <Card className={styles.card}>
+        <div className={styles.header}>
+          <SmileOutlined className={styles.icon} />
           <Typography.Title level={2} style={{ margin: 0 }}>Open Trivia</Typography.Title>
-          <Typography.Text type="secondary">A multi round trivia game built Ilya</Typography.Text>
+          <Typography.Text type="secondary">A multi-round trivia game built by Ilya</Typography.Text>
         </div>
         <Form
           layout="vertical"
@@ -62,7 +64,7 @@ export default function Home() {
             )}
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit" block disabled={loading}>Start Game</Button>
+            <Button className={styles.button} type="primary" htmlType="submit" block disabled={loading}>Start Game</Button>
           </Form.Item>
         </Form>
       </Card>

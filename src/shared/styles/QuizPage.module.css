@@ -1,0 +1,33 @@
+.container {
+  min-height: 100vh;
+  background: #f7f8fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card {
+  width: 600px;
+  padding: 32px;
+  box-shadow: 0 2px 16px #0001;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.buttonRow {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.button {
+  flex: 1;
+}
+
+.nextButton {
+  flex: 1;
+}
+
+.question {
+  font-size: 18px;
+} 
