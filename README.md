@@ -1,6 +1,6 @@
 # Open Trivia Quiz App
 
-![Start Screen](./docs/start-screen.png)
+![Start Screen](/start_screen.png)
 
 ## Description
 
@@ -57,11 +57,6 @@ This is a quiz application built with Next.js, TypeScript, Ant Design, and the O
    ```
 3. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
----
-
-## Start Screen
-
-![Start Screen](./docs/start-screen.png)
 
 ---
 
