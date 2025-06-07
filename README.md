@@ -1,6 +1,6 @@
 # Open Trivia Quiz App
 
-![Start Screen](/start_screen.png)
+![Start Screen](https://raw.githubusercontent.com/EliKiz/quiz-app/main/public/start_screen.png)
 
 ## Description
 
