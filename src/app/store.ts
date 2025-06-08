@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 export interface Category {
   id: number;
@@ -27,8 +27,9 @@ export const useCategoryStore = create<CategoryState>((set) => ({
   error: null,
   fetchCategories: async () => {
     set({ loading: true, error: null });
+    
     try {
-      const res = await fetch('https://opentdb.com/api_category.php');
+      const res = await fetch("https://opentdb.com/api_category.php");
       const data: TriviaCategoriesResponse = await res.json();
       set({
         categories: data.trivia_categories.map((cat) => ({
@@ -39,7 +40,10 @@ export const useCategoryStore = create<CategoryState>((set) => ({
         error: null,
       });
     } catch (e) {
-      set({ loading: false, error: e instanceof Error ? e.message : 'Failed to load categories' });
+      set({
+        loading: false,
+        error: e instanceof Error ? e.message : "Failed to load categories",
+      });
     }
   },
 }));
@@ -61,7 +65,12 @@ interface QuizState {
   incorrect: number;
   loading: boolean;
   error: string | null;
-  fetchQuestions: (params: { category: number; amount?: number; difficulty?: string; type?: string }) => Promise<void>;
+  fetchQuestions: (params: {
+    category: number;
+    amount?: number;
+    difficulty?: string;
+    type?: string;
+  }) => Promise<void>;
   answer: (answer: string) => void;
   resetQuiz: () => void;
 }
@@ -87,10 +96,16 @@ export const useQuizStore = create<QuizState>((set, get) => ({
   incorrect: 0,
   loading: false,
   error: null,
-  fetchQuestions: async ({ category, amount = 5, difficulty = "easy", type = "multiple" }) => {
-    set({ loading: true, error: null, questions: [], current: 0, correct: 0, incorrect: 0 });
+  fetchQuestions: async ({ category, amount = 5, difficulty, type }) => {
+    set({ loading: true, error: null });
     try {
-      const url = `https://opentdb.com/api.php?amount=${amount}&category=${category}&difficulty=${difficulty}&type=${type}`;
+      const params = [
+        `amount=${amount}`,
+        category ? `category=${category}` : null,
+        difficulty ? `difficulty=${difficulty}` : null,
+        type ? `type=${type}` : null,
+      ].filter(Boolean).join('&');
+      const url = `https://opentdb.com/api.php?${params}`;
       const res = await fetch(url);
       const data: TriviaQuestionsResponse = await res.json();
       if (data.response_code !== 0) throw new Error("No questions found");
@@ -98,9 +113,19 @@ export const useQuizStore = create<QuizState>((set, get) => ({
         ...q,
         all_answers: shuffle([q.correct_answer, ...q.incorrect_answers]),
       }));
-      set({ questions, loading: false, error: null });
+      set({
+        questions,
+        loading: false,
+        error: null,
+        current: 0,
+        correct: 0,
+        incorrect: 0,
+      });
     } catch (e) {
-      set({ loading: false, error: e instanceof Error ? e.message : "Failed to load questions" });
+      set({
+        loading: false,
+        error: e instanceof Error ? e.message : "Failed to load questions",
+      });
     }
   },
   answer: (answer: string) => {
@@ -112,7 +137,15 @@ export const useQuizStore = create<QuizState>((set, get) => ({
       current: current + 1,
     });
   },
-  resetQuiz: () => set({ questions: [], current: 0, correct: 0, incorrect: 0, loading: false, error: null }),
+  resetQuiz: () =>
+    set({
+      questions: [],
+      current: 0,
+      correct: 0,
+      incorrect: 0,
+      loading: false,
+      error: null,
+    }),
 }));
 
 function shuffle(array: string[]) {
@@ -124,10 +157,10 @@ function shuffle(array: string[]) {
 
 export interface GameSettings {
   player: string;
-  rounds: number;
-  questions: number;
+  amount: number;
   level: string;
-  category: number | null;
+  type: string;
+  category: number | string | null;
 }
 
 interface SettingsState {
@@ -137,11 +170,11 @@ interface SettingsState {
 
 export const useSettingsStore = create<SettingsState>((set) => ({
   settings: {
-    player: '',
-    rounds: 3,
-    questions: 3,
-    level: 'easy',
-    category: null,
+    player: "",
+    amount: 10,
+    level: "easy",
+    type: "multiple",
+    category: "",
   },
   setSettings: (settings) => set({ settings }),
-})); 
+}));
