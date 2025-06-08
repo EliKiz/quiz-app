@@ -22,7 +22,6 @@ export default function Home() {
   const router = useRouter();
   const setSettings = useSettingsStore((s) => s.setSettings);
   const { categories, loading, error, fetchCategories } = useCategoryStore();
-  const [form] = Form.useForm();
 
   useEffect(() => {
     if (categories.length === 0) fetchCategories();
