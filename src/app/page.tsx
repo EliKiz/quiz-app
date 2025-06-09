@@ -12,7 +12,8 @@ import {
   Typography,
   Spin,
 } from "antd";
-import { useSettingsStore, useCategoryStore } from "./store";
+import { useSettingsStore } from "./store/settingsStore";
+import { useCategoryStore } from "./store/categoryStore";
 import { SmileOutlined } from "@ant-design/icons";
 import "antd/dist/reset.css";
 

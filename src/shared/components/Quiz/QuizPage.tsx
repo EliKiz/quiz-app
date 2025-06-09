@@ -1,11 +1,14 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Card, Typography, Spin, Button, Space, Result } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import { useQuizStore, useSettingsStore } from "../../../app/store";
+import { useQuizStore } from "../../../app/store/quizStore";
+import { useSettingsStore } from "../../../app/store/settingsStore";
 import styles from "../../styles/QuizPage.module.css";
+import QuizAnswerButton from "./QuizAnswerButton";
+import QuizResult from "./QuizResult";
 
 export default function QuizPage() {
   const params = useParams();
@@ -24,26 +27,17 @@ export default function QuizPage() {
   const [selected, setSelected] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
   const player = useSettingsStore((s) => s.settings.player);
-  const didFetch = useRef(false);
 
   useEffect(() => {
-    didFetch.current = false;
-  }, [categoryId]);
-
-  useEffect(() => {
-    if (!didFetch.current) {
-      const settings = useSettingsStore.getState().settings;
-      fetchQuestions({
-        category: categoryId,
-        amount: settings.amount,
-        difficulty: settings.level,
-        type: settings.type,
-      });
-      setSelected(null);
-      setShowResult(false);
-      didFetch.current = true;
-    }
-    // eslint-disable-next-line
+    const settings = useSettingsStore.getState().settings;
+    fetchQuestions({
+      category: categoryId,
+      amount: settings.amount,
+      difficulty: settings.level,
+      type: settings.type,
+    });
+    setSelected(null);
+    setShowResult(false);
   }, [categoryId, fetchQuestions]);
 
   if (loading) {
@@ -79,33 +73,26 @@ export default function QuizPage() {
           title="No questions"
           subTitle="There are no available questions in this category."
           extra={
-            <Button onClick={() => router.push("/")}>Back to main screen</Button>
+            <Button onClick={() => router.push("/")}>
+              Back to main screen
+            </Button>
           }
         />
       </div>
     );
   }
 
-
   if (current >= questions.length) {
     return (
       <div className={styles.container}>
-        <Result
-          status="success"
-          title="Quiz completed!"
-          subTitle={`Player: ${player}\nCorrect answers: ${correct} of ${questions.length}`}
-          extra={[
-            <Button
-              key="back"
-              type="primary"
-              onClick={() => {
-                resetQuiz();
-                router.push("/");
-              }}
-            >
-              Back to main screen
-            </Button>,
-          ]}
+        <QuizResult
+          player={player}
+          correct={correct}
+          total={questions.length}
+          onBack={() => {
+            resetQuiz();
+            router.push("/");
+          }}
         />
       </div>
     );
@@ -116,7 +103,7 @@ export default function QuizPage() {
   const handleAnswer = (ans: string) => {
     setSelected(ans);
     setShowResult(true);
-  }
+  };
 
   const handleNext = () => {
     if (selected) {
@@ -124,7 +111,7 @@ export default function QuizPage() {
       setSelected(null);
       setShowResult(false);
     }
-  }
+  };
 
   return (
     <div className={styles.container}>
@@ -137,24 +124,13 @@ export default function QuizPage() {
         </Typography.Paragraph>
         <Space direction="vertical" style={{ width: "100%" }}>
           {q.all_answers.map((ans) => (
-            <Button
+            <QuizAnswerButton
               key={ans}
-              block
-              size="large"
-              disabled={!!selected}
-              type={
-                selected === ans
-                  ? ans === q.correct_answer
-                    ? "primary"
-                    : "default"
-                  : "default"
-              }
-              danger={selected === ans && ans !== q.correct_answer}
-              onClick={() => handleAnswer(ans)}
-              style={{ textAlign: "left", whiteSpace: "normal" }}
-            >
-              <span dangerouslySetInnerHTML={{ __html: ans }} />
-            </Button>
+              ans={ans}
+              selected={selected}
+              correctAnswer={q.correct_answer}
+              onClick={handleAnswer}
+            />
           ))}
         </Space>
         {showResult && selected && (
